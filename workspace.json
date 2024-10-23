@@ -1,0 +1,10 @@
+{
+    "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/workspace-schema.json",
+    "version": 2,
+    "projects": {
+        "shared": "libs/shared",
+        "web": "apps/web",
+        "web2": "apps/web2",
+        "bns-web-revamp2023": "apps/bns-web-revamp2023"
+    }
+}

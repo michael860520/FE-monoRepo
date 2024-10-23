@@ -1,0 +1,48 @@
+{
+  "name": "web2",
+  "$schema": "https://raw.githubusercontent.com/nrwl/nx/master/packages/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/web2/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nuxt build",
+          "npx copyfiles -u 1 .output/**/* ../../dist/apps/web2",
+          "npx rimraf .output"
+        ],
+        "cwd": "apps/web2",
+        "parallel": false
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "npx nuxt dev",
+        "cwd": "apps/web2"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/vite:test",
+      "outputs": ["coverage/apps/web2"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/apps/web2"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/web2/**/*.{ts,js,tsx,jsx,vue}"],
+        "fix": true
+      }
+    }
+  },
+  "tags": []
+}
