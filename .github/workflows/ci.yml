@@ -39,7 +39,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm nx affected -t lint
+        run: pnpm run lint
 
       - name: Test
         run: pnpm nx affected -t test
