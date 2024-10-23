@@ -4,7 +4,6 @@
     "projects": {
         "shared": "libs/shared",
         "web": "apps/web",
-        "web2": "apps/web2",
-        "bns-web-revamp2023": "apps/bns-web-revamp2023"
+        "web2": "apps/web2"
     }
 }
