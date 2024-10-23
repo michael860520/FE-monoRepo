@@ -1,55 +1,71 @@
-name: CI
+name: 'ci'
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main, 'next-major-release/**']
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
-
-env:
-  NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
-  NX_VERBOSE_LOGGING: false
-  NX_CLOUD_DEBUG_URLS: false
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+    branches:
+      - main
 
 jobs:
-  primary:
-    name: Primary
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          version: 9.12.2
-          run_install: false
-
-      - name: Install Node.js
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set node ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Test
-        run: pnpm nx affected -t test
-
+          node-version: ${{ matrix.node }}
+      - name: Setup
+        run: npm i -g @antfu/ni
+      - name: Install
+        run: nci
       - name: Build
-        run: pnpm nx affected -t build
+        run: nr build
 
-  build-finished:
-    needs: primary
+  test:
     runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          node: [lts/*]
+          os: [ubuntu-latest, windows-latest, macos-latest]
+        fail-fast: false
+  
     steps:
-      - name: Trace
-        run: echo "All jobs finished successfully"
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Setup
+        run: npm i -g @antfu/ni
+      - name: Install
+        run: nci
+      - name: Build
+        run: nr build
+      - name: Test
+        run: nr test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Setup
+        run: npm i -g @antfu/ni
+      - name: Install
+        run: nci
+      - name: Lint Fix
+        run: nr lint:fix
+      - name: Lint
+        run: nr lint
