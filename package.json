@@ -1,8 +1,11 @@
 {
   "name": "nx-nuxt-starter",
-  "version": "0.0.0",
-  "license": "MIT",
   "private": true,
+  "volta": {
+    "node": "20.18.0"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "license": "MIT",
   "scripts": {
     "apps:dev": "nx run-many --target=serve",
     "web:dev": "nx run web:serve",
